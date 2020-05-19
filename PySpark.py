@@ -14,9 +14,9 @@ sc = spark.sparkContext
 #example1.show()
 #example2.show()
 
+
+
 #SOME DATA
-
-
 dataset1 = [
   {
   'key' : 'abc',
@@ -43,17 +43,37 @@ dataset2 = [
 ]
 
 rdd1 = sc.parallelize(dataset1)
-
 df1 = spark.createDataFrame(rdd1)
-
-print('df1')
-
 df1.show()
 
+
 rdd2 = sc.parallelize(dataset2)
-
 df2 = spark.createDataFrame(rdd2)
-
-print('df2')
-
 df2.show()
+
+#JOIN EXAMPLES
+df= df1.join(df2, on=['key'], how='inner')
+df.show()
+
+df = df1.join(df2, on=['key'], how='outer')
+df.show()
+
+df = df1.join(df2, on=['key'], how='left')
+df.show()
+
+df = df1.join(df2, on=['key'], how='right')
+df.show()
+
+#SQL JOIN
+df1.createOrReplaceTempView("Table1")
+df2.createOrReplaceTempView("Table2")
+
+spark.sql(
+"""
+SELECT Table1.*,Table2.val21,Table2.val22 FROM Table1
+INNER JOIN Table2
+ON
+Table1.key=Table2.key
+"""
+).show()
+
